@@ -1,0 +1,27 @@
+alias ..='cd ..'
+alias ...='cd .. && cd ..'
+alias pbcopy='xclip -selection clipboard'
+alias pbpaste='xclip -selection clipboard -o'
+alias projects='cd ~/projects'
+
+function hs() {
+    HS_PWD=`pwd`
+    cd ~/Homestead && vagrant "$@";
+    cd "$HS_PWD"
+}
+
+function upgrade() {
+  sudo apt-get update
+  sudo apt-get upgrade -y
+  sudo apt-get dist-upgrade -y
+  sudo apt-get autoremove -y
+  sudo apt-get autoclean -y
+}
+
+if [ -n "$ZSH_VERSION" ]; then
+  # Zplug stuff
+  . ~/.zplugrc
+fi
+
+export PATH=~/.composer/vendor/bin:$PATH
+

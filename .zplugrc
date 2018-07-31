@@ -1,0 +1,65 @@
+#!/bin/zsh
+
+# Inspired on https://github.com/unixorn/zsh-quickstart-kit/blob/master/zsh/.zgen-setup
+# Also: https://github.com/faceleg/dotfiles/blob/master/configuration/zshrc
+# https://github.com/b4b4r07/dotfiles/blob/master/.zsh/zplug.zsh
+
+ZPLUG_HOME="$HOME/.zplug"
+
+function install_zplug() {
+  if [[ ! -d $ZPLUG_HOME ]]; then
+    echo "Installing zplug..."
+    git clone https://github.com/zplug/zplug.git "$ZPLUG_HOME"
+  fi
+}
+
+function load_plugin_list() {
+  zstyle ":zplug:tag" depth 1
+  zplug "zsh-users/zsh-completions"
+  zplug 'zsh-users/zsh-autosuggestions'
+  zplug "zsh-users/zsh-syntax-highlighting", defer:2
+
+
+  zplug "b4b4r07/enhancd", use:init.sh
+  if zplug check "b4b4r07/enhancd"; then
+    #export ENHANCD_FILTER="fzf --height 50% --reverse --ansi --preview 'ls -l {}' --preview-window down"
+    export ENHANCD_FILTER="fzf --height 50% --reverse --ansi"
+    export ENHANCD_DOT_SHOW_FULLPATH=1
+  fi
+
+
+  # 0.5 seconds
+  zplug "plugins/fasd",        from:oh-my-zsh, ignore:oh-my-zsh.sh
+  zplug "wookayin/fzf-fasd"
+  zplug "plugins/gitfast",     from:oh-my-zsh, ignore:oh-my-zsh.sh
+  zplug "plugins/composer",    from:oh-my-zsh, ignore:oh-my-zsh.sh
+  zplug "plugins/git",         from:oh-my-zsh, ignore:oh-my-zsh.sh
+  zplug "plugins/github",      from:oh-my-zsh, ignore:oh-my-zsh.sh
+  zplug "plugins/bitbucket",   from:oh-my-zsh, ignore:oh-my-zsh.sh
+  zplug "plugins/php",         from:oh-my-zsh
+  zplug "plugins/rsync",       from:oh-my-zsh, ignore:oh-my-zsh.sh
+  zplug "plugins/docker",      from:oh-my-zsh, ignore:oh-my-zsh.sh
+
+  zplug "lib/history",         from:oh-my-zsh, ignore:oh-my-zsh.sh
+  zplug "lib/key-bindings",    from:oh-my-zsh, ignore:oh-my-zsh.sh
+  zplug "lib/compfix",         from:oh-my-zsh, ignore:oh-my-zsh.sh
+  zplug "lib/completion",      from:oh-my-zsh, ignore:oh-my-zsh.sh
+
+  zplug "chrissicool/zsh-256color", from:github, defer:2
+  zplug "chriskempson/base16-shell", use:"*/base16-tomorrow-night.sh"
+
+  zplug nojhan/liquidprompt, use:liquidprompt.plugin.zsh, from:github, as:theme
+
+  zplug "tj/git-extras", use:"etc/git-extras-completion.zsh", defer:3, if:"[[ $(command -v git) ]]"
+}
+
+function main() {
+  touch "$ZPLUG_HOME/packages.zsh"
+  install_zplug
+  source "$ZPLUG_HOME/init.zsh"
+  load_plugin_list
+  zplug check || zplug install
+  zplug load
+}
+
+main
